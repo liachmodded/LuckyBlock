@@ -1,0 +1,28 @@
+# Gradle
+.gradle
+build/
+gradle-app.setting
+.settings/
+
+# Minecraft
+bin/
+run/
+out/
+
+# Forge
+CREDITS-fml.txt
+LICENSE-fml.txt
+MinecraftForge-Credits.txt
+MinecraftForge-License.txt
+README.txt
+
+# Eclipse
+eclipse/
+.classpath
+.project
+
+# Idea
+.idea/
+*.iml
+*.ipr
+*.iws

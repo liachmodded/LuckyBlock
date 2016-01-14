@@ -1,0 +1,53 @@
+plugins {
+  id 'java'
+  id 'com.github.hierynomus.license' version '0.11.0'
+}
+
+defaultTasks 'clean', 'build'
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+archivesBaseName = project.name.toLowerCase()
+version = "${project.version}-r${project.apiVersion.split("-")[0]}"
+
+repositories {
+  mavenCentral()
+  jcenter()
+  maven {
+    name 'Sponge maven repo'
+    url 'http://repo.spongepowered.org/maven'
+  }
+  /*
+  maven {
+    name 'Forge maven repo'
+    url 'http://files.minecraftforge.net/maven'
+  }
+  */
+}
+
+dependencies {
+  compile "org.spongepowered:spongeapi:${project.apiVersion}"
+  compile 'org.slf4j:slf4j-api:1.7.12'
+  testCompile 'junit:junit:4.12'
+}
+
+license {
+  ext.name = project.name
+  ext.organization = project.organization
+  ext.url = project.url
+  header rootProject.file('HEADER.txt')
+  ignoreFailures true
+  strictCheck true
+  include '**/*.java'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.10'
+}
+
+build.dependsOn licenseMain, licenseFormatMain
+
+tasks.withType(Javadoc) {
+  options.addStringOption('Xdoclint:none', '-quiet')
+}
