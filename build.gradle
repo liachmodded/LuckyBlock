@@ -32,6 +32,17 @@ dependencies {
   testCompile 'junit:junit:4.12'
 }
 
+sourceSets {
+  api {
+    srcDir 'src/api/java'
+  }
+
+  main {
+    srcDir 'src/main/java'
+    compileClasspath += api.compileClasspath + api.output
+  }
+}
+
 license {
   ext.name = project.name
   ext.organization = project.organization
