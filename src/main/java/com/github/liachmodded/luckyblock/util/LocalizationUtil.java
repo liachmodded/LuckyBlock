@@ -1,7 +1,7 @@
-/*
- * This file is part of LuckyBlock, licensed under MIT License (MIT).
+/**
+ * This file is part of LuckyBlock, licensed under the MIT License (MIT).
  *
- * Copyright (c) 2015 liachmodded <http://github.com/liachmodded>
+ * Copyright (c) liachmodded <http://github.com/liachmodded>
  * Copyright (c) contributors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

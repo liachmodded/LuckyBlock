@@ -33,14 +33,10 @@ dependencies {
 }
 
 sourceSets {
-  api {
-    srcDir 'src/api/java'
-  }
-
-  main {
-    srcDir 'src/main/java'
-    compileClasspath += api.compileClasspath + api.output
-  }
+  api 
+  //api.srcDirs 'src/api/java'   
+  //api.compileClasspath += main.compileClasspath + main.output
+  //main.srcDirs 'src/main/java' 
 }
 
 license {
