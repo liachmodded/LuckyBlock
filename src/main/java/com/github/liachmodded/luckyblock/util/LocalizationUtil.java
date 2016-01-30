@@ -37,7 +37,13 @@ import java.util.ResourceBundle;
  */
 public final class LocalizationUtil {
 
-  static Map<Locale, ResourceBundle> localizations = Maps.newHashMap();
+  private static final LocalizationUtil INSTANCE = new LocalizationUtil();
+
+  private Map<Locale, ResourceBundle> localizations = Maps.newHashMap();
+
+  public static LocalizationUtil getInstance() {
+    return INSTANCE;
+  }
 
   private LocalizationUtil() {
   }

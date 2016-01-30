@@ -26,6 +26,7 @@ package com.github.liachmodded.luckyblock;
 
 import com.google.inject.Inject;
 import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.ConfigurationOptions;
 import ninja.leaping.configurate.gson.GsonConfigurationLoader;
 import org.spongepowered.api.Game;
 import org.spongepowered.api.GameRegistry;
@@ -34,9 +35,11 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.text.translation.locale.Locales;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Locale;
 
 @Plugin(
     id = LuckyBlock.ID,
@@ -58,6 +61,8 @@ public final class LuckyBlock {
 
   @Inject @DefaultConfig(sharedRoot = false) private File configDir;
   private File configFile;
+
+  private Locale currentLocale = Locales.DEFAULT;
 
   private static LuckyBlock instance;
 
@@ -84,9 +89,21 @@ public final class LuckyBlock {
   private void loadConfig() {
     GsonConfigurationLoader configLoader =
         GsonConfigurationLoader.builder().setFile(configFile).build();
-    ConfigurationNode configNode = configLoader.createEmptyNode();
-    configNode.getOptions().setHeader(
-        "LuckyBlock Configuration"
+    ConfigurationOptions masterOption = ConfigurationOptions.defaults().setHeader(
+        "========================\n"
+            + "LuckyBlock Configuration\n"
+            + "========================"
     );
+    ConfigurationNode masterNode = configLoader.createEmptyNode(masterOption);
+    ConfigurationNode localization = masterNode.getNode("Localization File");
+    ConfigurationOptions localeInfo = ConfigurationOptions.defaults().setHeader(
+        "Please provide a name for the locale you are using, for example, en_US."
+    );
+    ConfigurationNode locale = localization.getNode("Locale");
+    String localeString = locale.getString("en_US").replace('_', '-');
+    Locale tmp = Locale.forLanguageTag(localeString);
+    if (tmp != null) {
+      this.currentLocale = tmp;
+    }
   }
 }

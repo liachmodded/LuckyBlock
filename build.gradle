@@ -39,6 +39,9 @@ sourceSets {
   //main.srcDirs 'src/main/java' 
 }
 
+task apiJar(type: Jar) {
+}
+
 license {
   ext.name = project.name
   ext.organization = project.organization
