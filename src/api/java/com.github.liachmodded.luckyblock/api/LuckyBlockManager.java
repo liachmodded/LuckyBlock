@@ -24,7 +24,16 @@
  */
 package com.github.liachmodded.luckyblock.api;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
+import org.spongepowered.api.Sponge;
+import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.event.block.ChangeBlockEvent;
+import org.spongepowered.api.util.Tristate;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by liach on 1/28/2016.
@@ -34,6 +43,93 @@ import java.util.List;
 public abstract class LuckyBlockManager {
 
   protected List<LuckyBlockHandler> checkers;
+  protected ReentrantLock checkerLock;
 
+  protected LuckyBlockManager(Object plugin) {
+    assert Sponge.getPluginManager().fromInstance(plugin).isPresent()
+        : "invalid plugin instance";
+    checkers = Sponge.getServiceManager().isRegistered(LuckyBlockManager.class)
+        ? Lists.newArrayList(Sponge.getServiceManager().provide(LuckyBlockManager.class)
+            .get().checkers)
+        : new ArrayList<>();
+    checkerLock = new ReentrantLock();
+    Sponge.getServiceManager().setProvider(plugin, LuckyBlockManager.class, this);
+  }
 
+  public static LuckyBlockManager getInstance() {
+    assert Sponge.getServiceManager().isRegistered(LuckyBlockManager.class)
+        : "No lucky block manager available";
+    return Sponge.getServiceManager().provide(LuckyBlockManager.class).get();
+  }
+
+  public void addHandler(LuckyBlockHandler newHandler) {
+    checkerLock.lock();
+    try {
+      for (int i = 0, n = checkers.size(); i < n; i++) {
+        if (checkers.get(i) == newHandler) {
+          checkers.remove(i);
+          break;
+        }
+      }
+      checkers.add(newHandler);
+    } finally {
+      checkerLock.unlock();
+    }
+  }
+
+  public void removeHandler(LuckyBlockHandler oldHandler) {
+    checkerLock.lock();
+    try {
+      for (int i = 0, n = checkers.size(); i < n; i++) {
+        if (checkers.get(i) == oldHandler) {
+          checkers.remove(i);
+          break;
+        }
+      }
+    } finally {
+      checkerLock.unlock();
+    }
+  }
+
+  public boolean checkLuckyBlock(BlockState state) {
+    checkerLock.lock();
+    boolean result = false;
+    try {
+      for (int i = 0, n = checkers.size(); i < n; i++) {
+        Tristate tristate = checkers.get(i).isLuckyBlock(state);
+        if (tristate == Tristate.FALSE) {
+          result = false;
+        }
+        if (tristate == Tristate.TRUE) {
+          result = true;
+        }
+      }
+    } finally {
+      checkerLock.unlock();
+    }
+    return result;
+  }
+
+  public boolean checkDrop(ChangeBlockEvent event) {
+    checkerLock.lock();
+    boolean result = false;
+    try {
+      for (int i = 0, n = checkers.size(); i < n; i++) {
+        Tristate tristate = checkers.get(i).canApplyDrop(event);
+        if (tristate == Tristate.FALSE) {
+          result = false;
+        }
+        if (tristate == Tristate.TRUE) {
+          result = true;
+        }
+      }
+    } finally {
+      checkerLock.unlock();
+    }
+    return result;
+  }
+
+  public List<LuckyBlockHandler> getHandlers() {
+    return ImmutableList.copyOf(checkers);
+  }
 }

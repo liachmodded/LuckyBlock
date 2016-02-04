@@ -22,26 +22,35 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.github.liachmodded.luckyblock.api;
+package com.github.liachmodded.luckyblock;
 
-
+import com.github.liachmodded.luckyblock.api.LuckyBlockHandler;
 import org.spongepowered.api.block.BlockState;
+import org.spongepowered.api.block.BlockTypes;
+import org.spongepowered.api.block.trait.BooleanTraits;
 import org.spongepowered.api.event.block.ChangeBlockEvent;
 import org.spongepowered.api.util.Tristate;
 
+import java.util.Optional;
+
 /**
- * Created by liach on 1/28/2016.
+ * Created by liach on 1/29/2016.
  *
  * @author liach
  */
-public interface LuckyBlockHandler {
+public class DefaultHandler implements LuckyBlockHandler {
 
-  default Tristate isLuckyBlock(BlockState block) {
+  @Override public Tristate isLuckyBlock(BlockState bs) {
+    if (bs.getType() == BlockTypes.SPONGE) {
+      Optional<Boolean> optWet = bs.getTraitValue(BooleanTraits.SPONGE_WET);
+      if (optWet.isPresent() && optWet.get()) {
+        return Tristate.TRUE;
+      }
+    }
     return Tristate.UNDEFINED;
   }
 
-  default Tristate canApplyDrop(ChangeBlockEvent event) {
-    return Tristate.UNDEFINED;
+  @Override public Tristate canApplyDrop(ChangeBlockEvent event) {
+    return Tristate.TRUE;
   }
-
 }

@@ -24,24 +24,16 @@
  */
 package com.github.liachmodded.luckyblock.api;
 
-
-import org.spongepowered.api.block.BlockState;
-import org.spongepowered.api.event.block.ChangeBlockEvent;
-import org.spongepowered.api.util.Tristate;
-
 /**
- * Created by liach on 1/28/2016.
+ * Created by liach on 1/29/2016.
  *
  * @author liach
  */
-public interface LuckyBlockHandler {
+public interface Drop {
 
-  default Tristate isLuckyBlock(BlockState block) {
-    return Tristate.UNDEFINED;
-  }
+  boolean isEnabled();
 
-  default Tristate canApplyDrop(ChangeBlockEvent event) {
-    return Tristate.UNDEFINED;
-  }
+  void enable();
+
 
 }
